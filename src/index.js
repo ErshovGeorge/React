@@ -13,43 +13,49 @@ class Draw extends React.Component {
         m: 20,
         g: 9.8,
         v: 0,
+        isAnim: false,
       }
-      this.handleClick = this.handleClick.bind(this)
+
+      this.Move = this.Move.bind(this)
       this.ball = this.ball.bind(this)
+      this.Start = this.Start.bind(this)
     }
 
     componentDidMount() {
         this.ball(this.state.dy)
+        this.Move()
     }
 
-    componentDidUpdate() {
-        this.ball(this.state.dy)
+    Start(){
+      this.setState(prevstate => ({isAnim: !this.state.isAnim}))
     }
 
-    handleClick() {
+    Move() {
+      if(this.state.isAnim){
+        let m_previos = this.state.m;
+        let k_previos = this.state.k;
+        this.setState({k: document.getElementById("k").value});
+        this.setState({m: document.getElementById("m").value})
+        if (this.state.m == "" || this.state.m == 0){
+          this.setState({m: m_previos});
+        }
+        if (this.state.k == "" || this.state.k == 0){
+          this.setState({k: k_previos});
+        }
 
-      let m_previos = this.state.m;
-      let k_previos = this.state.k;
-      this.setState({k: document.getElementById("k").value});
-      this.setState({m: document.getElementById("m").value})
-      if (this.state.m == "" || this.state.m == 0){
-        this.setState({m: m_previos});
+
+        let a = this.state.g - this.state.k/this.state.m * this.state.dy;
+        this.setState({v: this.state.v + a * 0.1});
+        this.setState({dy : this.state.dy + this.state.v*0.1});
+        this.ball(this.state.dy);
       }
-      if (this.state.k == "" || this.state.k == 0){
-        this.setState({k: k_previos});
-      }
-
-
-      let a = this.state.g - this.state.k/this.state.m * this.state.dy;
-      this.state.v = this.state.v + a * 0.1;
-      this.setState({dy : this.state.dy + this.state.v*0.1});
-      requestAnimationFrame(this.handleClick);
+      requestAnimationFrame(this.Move);
     }
-
 
 
     ball(dy) {
-      const ctx = this.refs.canvas.getContext('2d');
+      var canvas = document.getElementById('canvas');
+      var ctx = this.refs.canvas.getContext('2d');
       ctx.clearRect(0, 0, 1000, 1000);
       ctx.beginPath();
       ctx.lineWidth=4;
@@ -101,35 +107,11 @@ class Draw extends React.Component {
             <input type="text" id="m"></input>
 
             <canvas ref="canvas" width={600} height={700}/>
-            <button onClick={this.handleClick}>Пуск!</button>
-            </div>
+            <input type="button" value="Пуск!" onClick={this.Start}></input>
+          </div>
         );
     }
 }
-
-
-
-// class Buttons extends React.Component{
-//   handleClick(){
-//     let k = document.getElementById("k").value;
-//     let m = document.getElementById("m").value;
-//   }
-//
-//   render(){
-//     return(
-//
-//     <div>
-//     <label for="k">Введите k:</label>
-//     <input type="text" id="k"></input>
-//     <label for="m">Введите m:</label>
-//     <input type="text" id="m"></input>
-//     <input type="button"
-//      onclick={() => alert("Click")}
-//      value='Пуск'></input>
-//     </div>
-//   );
-// }
-// }
 
 
 
@@ -140,7 +122,4 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
