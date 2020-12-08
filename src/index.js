@@ -14,21 +14,42 @@ class Draw extends React.Component {
         g: 9.8,
         v: 0,
         isAnim: false,
+        gravity: "Гравитация есть",
+        gravitybut: true,
       }
 
       this.Move = this.Move.bind(this)
       this.ball = this.ball.bind(this)
       this.Start = this.Start.bind(this)
+      this.Gravity = this.Gravity.bind(this)
+      this.earth = this.earth.bind(this)
     }
 
     componentDidMount() {
         this.ball(this.state.dy)
+        this.earth()
         this.Move()
     }
 
     Start(){
       this.setState(prevstate => ({isAnim: !this.state.isAnim}))
     }
+
+    Gravity(){
+      var canvas = document.getElementById('canvas2');
+      var ctx = this.refs.canvas2.getContext('2d');
+      if(this.state.gravitybut){
+        this.setState({gravity: "Гравитации нет"})
+        this.setState({g: 0})
+        ctx.clearRect(0, 0, 1000, 1000)
+      } else {
+        this.setState({gravity: "Гравитация есть"})
+        this.setState({g: 9.8})
+        this.earth()
+      }
+      this.setState(ptevstate => ({gravitybut: !this.state.gravitybut}))
+    }
+
 
     Move() {
       if(this.state.isAnim){
@@ -43,7 +64,6 @@ class Draw extends React.Component {
           this.setState({k: k_previos});
         }
 
-
         let a = this.state.g - this.state.k/this.state.m * this.state.dy;
         this.setState({v: this.state.v + a * 0.1});
         this.setState({dy : this.state.dy + this.state.v*0.1});
@@ -52,10 +72,18 @@ class Draw extends React.Component {
       requestAnimationFrame(this.Move);
     }
 
+    earth(){
+      var canvas = document.getElementById('canvas2');
+      var ctx = this.refs.canvas2.getContext('2d');
+      ctx.beginPath();
+      ctx.arc(100, 200, 100, 1*Math.PI, 2*Math.PI, false);
+      ctx.fillStyle = 'green';
+      ctx.fill();
+    }
 
     ball(dy) {
-      var canvas = document.getElementById('canvas');
-      var ctx = this.refs.canvas.getContext('2d');
+      var canvas = document.getElementById('canvas1');
+      var ctx = this.refs.canvas1.getContext('2d');
       ctx.clearRect(0, 0, 1000, 1000);
       ctx.beginPath();
       ctx.lineWidth=4;
@@ -106,8 +134,11 @@ class Draw extends React.Component {
             <label for="m">Введите m:</label>
             <input type="text" id="m"></input>
 
-            <canvas ref="canvas" width={600} height={700}/>
+
             <input type="button" value="Пуск!" onClick={this.Start}></input>
+            <input type="button" value={this.state.gravity} onClick={this.Gravity}></input>
+            <canvas ref="canvas1" width={600} height={700}/>
+            <canvas ref="canvas2" width={200} height={300}/>
           </div>
         );
     }
