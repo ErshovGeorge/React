@@ -14,13 +14,12 @@ class Draw extends React.Component {
         g: 9.8,
         v: 0,
         isAnim: false,
-        gravity: "Гравитация есть",
         gravitybut: true,
+        gravity: "Гравитация есть",
       }
 
       this.Move = this.Move.bind(this)
       this.ball = this.ball.bind(this)
-      this.Start = this.Start.bind(this)
       this.Gravity = this.Gravity.bind(this)
       this.earth = this.earth.bind(this)
     }
@@ -31,13 +30,9 @@ class Draw extends React.Component {
         this.Move()
     }
 
-    Start(){
-      this.setState(prevstate => ({isAnim: !this.state.isAnim}))
-    }
-
     Gravity(){
-      var canvas = document.getElementById('canvas2');
-      var ctx = this.refs.canvas2.getContext('2d');
+      var canvas = document.getElementById('canvasEarth');
+      var ctx = this.refs.canvasEarth.getContext('2d');
       if(this.state.gravitybut){
         this.setState({gravity: "Гравитации нет"})
         this.setState({g: 0})
@@ -53,6 +48,7 @@ class Draw extends React.Component {
 
     Move() {
       if(this.state.isAnim){
+        
         let m_previos = this.state.m;
         let k_previos = this.state.k;
         this.setState({k: document.getElementById("k").value});
@@ -73,8 +69,8 @@ class Draw extends React.Component {
     }
 
     earth(){
-      var canvas = document.getElementById('canvas2');
-      var ctx = this.refs.canvas2.getContext('2d');
+      var canvas = document.getElementById('canvasEarth');
+      var ctx = this.refs.canvasEarth.getContext('2d');
       ctx.beginPath();
       ctx.arc(100, 200, 100, 1*Math.PI, 2*Math.PI, false);
       ctx.fillStyle = 'green';
@@ -82,8 +78,8 @@ class Draw extends React.Component {
     }
 
     ball(dy) {
-      var canvas = document.getElementById('canvas1');
-      var ctx = this.refs.canvas1.getContext('2d');
+      var canvas = document.getElementById('canvasBall');
+      var ctx = this.refs.canvasBall.getContext('2d');
       ctx.clearRect(0, 0, 1000, 1000);
       ctx.beginPath();
       ctx.lineWidth=4;
@@ -126,6 +122,7 @@ class Draw extends React.Component {
       ctx.strokeStyle='red';
       ctx.stroke();
     }
+
     render() {
         return (
           <div>
@@ -135,10 +132,11 @@ class Draw extends React.Component {
             <input type="text" id="m"></input>
 
 
-            <input type="button" value="Пуск!" onClick={this.Start}></input>
+            <input type="button" value="Пуск!"
+            onClick={() => this.setState(prevstate => ({isAnim: !this.state.isAnim}))}></input>
             <input type="button" value={this.state.gravity} onClick={this.Gravity}></input>
-            <canvas ref="canvas1" width={600} height={700}/>
-            <canvas ref="canvas2" width={200} height={300}/>
+            <canvas ref="canvasBall" width={600} height={700}/>
+            <canvas ref="canvasEarth" width={200} height={300}/>
           </div>
         );
     }
